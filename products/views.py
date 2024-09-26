@@ -12,11 +12,12 @@ from products.models import Product
 
 @api_view(['GET', 'POST'])
 def product_list(request):
-    # Handle GET request: Return list of all products
+    # Handle GET request: Return list of all products (excluding soft-deleted ones)
     if request.method == 'GET':
-        products = Product.objects.all()
+        products = Product.objects.filter(is_deleted=False)  # Exclude deleted products
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
+
 
     # Handle POST request: Create a new product
     elif request.method == 'POST':
@@ -55,6 +56,7 @@ def product_detail(request, id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        # Delete the product
-        product.delete()
+        # Soft delete the product (set is_deleted to True)
+        product.is_deleted = True
+        product.save()  # Save the change to the database
         return Response(status=status.HTTP_204_NO_CONTENT)
