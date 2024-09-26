@@ -14,7 +14,13 @@ from products.models import Product
 def product_list(request):
     # Handle GET request: Return list of all products (excluding soft-deleted ones)
     if request.method == 'GET':
+        search_query = request.GET.get('search', '').strip()  # Get search query from request and strip whitespace
         products = Product.objects.filter(is_deleted=False)  # Exclude deleted products
+
+        if search_query:
+            # Filter products based on the search query (case-insensitive and allows 1 letter)
+            products = products.filter(name__icontains=search_query) | products.filter(description__icontains=search_query)
+
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
