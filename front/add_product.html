@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Add a New Product</h1>
+
+        <form id="product-form" class="mt-4">
+            <div class="mb-3">
+                <label for="productName" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="productName" placeholder="Enter product name" required>
+            </div>
+            <div class="mb-3">
+                <label for="productDescription" class="form-label">Product Description</label>
+                <textarea class="form-control" id="productDescription" rows="3" placeholder="Enter product description" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="productPrice" class="form-label">Product Price</label>
+                <!-- Allow decimal values by setting step="0.01" -->
+                <input type="number" step="0.01" class="form-control" id="productPrice" placeholder="Enter product price (e.g. 0.30)" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Product</button>
+        </form>
+
+        <!-- Success message -->
+        <div id="success-message" class="alert alert-success mt-3" style="display:none;">
+            Product added successfully!
+        </div>
+
+        <a href="index.html" class="btn btn-secondary mt-4">Back to Product List</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.getElementById('product-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('productName').value;
+            const description = document.getElementById('productDescription').value;
+            const price = parseFloat(document.getElementById('productPrice').value).toFixed(2); // Ensure the price is in decimal format
+
+            try {
+                const response = await axios.post('http://127.0.0.1:8000/products/', {
+                    name: name,
+                    description: description,
+                    price: price
+                });
+
+                document.getElementById('success-message').style.display = 'block';
+                document.getElementById('product-form').reset();
+
+            } catch (error) {
+                console.error('Error adding product:', error);
+                alert('Failed to add product.');
+            }
+        });
+    </script>
+</body>
+</html>
