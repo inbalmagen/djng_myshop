@@ -7,7 +7,10 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
+# Serializer for categories, including products
 class CategorySerializer(serializers.ModelSerializer):
+    products = ProductSerializer(many=True, read_only=True)
+
     class Meta:
         model = Category
-        fields = ['id', 'name', 'popularity']  # Define the fields to be serialized
+        fields = ['id', 'name', 'popularity', 'products']  # Include products in the output

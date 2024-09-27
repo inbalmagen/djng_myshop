@@ -37,7 +37,7 @@ def product_list(request):
 def category_list(request):
     # Handle GET request: Return list of all categories
     if request.method == 'GET':
-        categories = Category.objects.all()
+        categories = Category.objects.prefetch_related('products').all()  # Prefetch products to optimize
         serializer = CategorySerializer(categories, many=True)  # Serialize the data
         return Response(serializer.data)
     
